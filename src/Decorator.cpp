@@ -240,15 +240,21 @@ web::WebRequest makeRequest(Context const& ctx, std::string const& request, std:
 // ---------------------------------------------------------------- response
 
 Result<std::string> extractText(web::WebResponse& res) {
-	auto jsonRes = res.json();
+	auto raw = res.string().unwrapOr("");
+	auto jsonRes = matjson::parse(raw);
 	if (!jsonRes) {
-		return Err(fmt::format("HTTP {} - couldn't read the response", res.code()));
+		return Err(fmt::format("HTTP {}: {}", res.code(), raw.substr(0, 300)));
 	}
-	matjson::Value const json = jsonRes.unwrap();
+	matjson::Value json = jsonRes.unwrap();
+	// Google's OpenAI-compatible endpoint wraps errors in an array
+	if (json.isArray() && json.size() > 0) json = json[0];
 
 	if (!res.ok()) {
+		log::warn("AI request failed ({}): {}", res.code(), raw);
 		auto msg = json["error"]["message"].asString().unwrapOr("");
-		if (msg.empty()) msg = json["error"].asString().unwrapOr("unknown error");
+		if (msg.empty()) msg = json["error"].asString().unwrapOr("");
+		if (msg.empty()) msg = json["message"].asString().unwrapOr("");
+		if (msg.empty()) msg = raw.substr(0, 300);
 		return Err(fmt::format("HTTP {}: {}", res.code(), msg));
 	}
 
