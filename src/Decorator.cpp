@@ -244,7 +244,7 @@ Result<std::string> extractText(web::WebResponse& res) {
 	if (!jsonRes) {
 		return Err(fmt::format("HTTP {} - couldn't read the response", res.code()));
 	}
-	auto json = jsonRes.unwrap();
+	matjson::Value const json = jsonRes.unwrap();
 
 	if (!res.ok()) {
 		auto msg = json["error"]["message"].asString().unwrapOr("");
@@ -280,7 +280,7 @@ Result<Plan> parsePlan(std::string const& text, Context const& ctx) {
 	if (!parsed) {
 		return Err("The AI's JSON was broken (it may have been cut off - try a lower Max Objects)");
 	}
-	auto json = parsed.unwrap();
+	matjson::Value const json = parsed.unwrap();
 
 	Plan plan;
 	plan.summary = json["summary"].asString().unwrapOr("");

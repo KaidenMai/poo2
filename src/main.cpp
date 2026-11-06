@@ -22,17 +22,17 @@ class $modify(AIEditorUI, EditorUI) {
 		btn->setID("ai-decorate-button"_spr);
 
 		// Put it next to undo/redo if that menu exists, otherwise top center
-		if (auto menu = this->getChildByID("undo-menu")) {
-			menu->addChild(btn);
-			menu->updateLayout();
+		if (auto undoMenu = this->getChildByID("undo-menu")) {
+			undoMenu->addChild(btn);
+			undoMenu->updateLayout();
 		}
 		else {
-			auto menu = CCMenu::create();
-			menu->setID("ai-decorate-menu"_spr);
+			auto newMenu = CCMenu::create();
+			newMenu->setID("ai-decorate-menu"_spr);
 			auto win = CCDirector::get()->getWinSize();
-			menu->setPosition({win.width / 2, win.height - 25.f});
-			menu->addChild(btn);
-			this->addChild(menu);
+			newMenu->setPosition({win.width / 2, win.height - 25.f});
+			newMenu->addChild(btn);
+			this->addChild(newMenu);
 		}
 		return true;
 	}
@@ -76,10 +76,11 @@ class $modify(AIEditorUI, EditorUI) {
 		m_fields->m_task.spawn(
 			"AI Decorate",
 			req.post(url),
-			[this, ctx = std::move(ctx)](web::WebResponse res) mutable {
+			[this, ctxPtr = std::make_shared<ai::Context>(std::move(ctx))](web::WebResponse res) {
 				// Make sure we touch the editor on the main thread
-				Loader::get()->queueInMainThread([this, ctx = std::move(ctx), res = std::move(res)]() mutable {
-					this->finishDecorate(ctx, res);
+				auto resPtr = std::make_shared<web::WebResponse>(std::move(res));
+				Loader::get()->queueInMainThread([this, ctxPtr, resPtr]() {
+					this->finishDecorate(*ctxPtr, *resPtr);
 				});
 			}
 		);
