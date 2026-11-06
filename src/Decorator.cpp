@@ -194,7 +194,13 @@ web::WebRequest makeRequest(Context const& ctx, std::string const& request, std:
 	auto mod = Mod::get();
 	auto provider = mod->getSettingValue<std::string>("provider");
 	auto key = mod->getSettingValue<std::string>("api-key");
-	auto model = mod->getSettingValue<std::string>("model");
+	auto model = std::string(string::trim(mod->getSettingValue<std::string>("model")));
+	key = std::string(string::trim(key));
+	if (model.empty()) {
+		if (provider == "Gemini") model = "gemini-2.5-flash";
+		else if (provider == "Anthropic") model = "claude-sonnet-5-5";
+		else model = "gpt-4o-mini";
+	}
 	int maxObjects = static_cast<int>(mod->getSettingValue<int64_t>("max-objects"));
 
 	auto sys = systemPrompt(maxObjects);
@@ -206,8 +212,10 @@ web::WebRequest makeRequest(Context const& ctx, std::string const& request, std:
 
 	auto messages = matjson::Value::array();
 
-	if (provider == "OpenAI-compatible") {
-		auto base = mod->getSettingValue<std::string>("base-url");
+	if (provider == "OpenAI-compatible" || provider == "Gemini") {
+		std::string base = provider == "Gemini"
+			? std::string("https://generativelanguage.googleapis.com/v1beta/openai")
+			: std::string(string::trim(mod->getSettingValue<std::string>("base-url")));
 		while (!base.empty() && base.back() == '/') base.pop_back();
 		outUrl = base + "/chat/completions";
 		req.header("Authorization", "Bearer " + key);
