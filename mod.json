@@ -1,0 +1,70 @@
+{
+	"geode": "5.10.1",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "kaiden.ai-decorator",
+	"name": "AI Decorator",
+	"version": "v1.0.0",
+	"developer": "kaiden",
+	"description": "An AI that decorates your level for you. Select your layout, describe a vibe, hit Decorate.",
+	"tags": ["editor", "utility"],
+	"settings": {
+		"provider": {
+			"type": "string",
+			"name": "AI Provider",
+			"description": "Which API to talk to. 'OpenAI-compatible' works with OpenAI, OpenRouter, Groq, local LM Studio/Ollama servers, etc.",
+			"default": "Anthropic",
+			"one-of": ["Anthropic", "OpenAI-compatible"]
+		},
+		"api-key": {
+			"type": "string",
+			"name": "API Key",
+			"description": "Your API key for the provider above. Stored in plain text in your Geode save folder, so don't share that folder.",
+			"default": ""
+		},
+		"model": {
+			"type": "string",
+			"name": "Model",
+			"description": "Model name. For Anthropic e.g. claude-sonnet-5-5. For OpenAI-compatible, whatever your provider calls it.",
+			"default": "claude-sonnet-5-5"
+		},
+		"base-url": {
+			"type": "string",
+			"name": "OpenAI-compatible Base URL",
+			"description": "Only used for the OpenAI-compatible provider. The /chat/completions part is added for you.",
+			"default": "https://api.openai.com/v1"
+		},
+		"max-objects": {
+			"type": "int",
+			"name": "Max Objects Per Run",
+			"description": "Upper limit on how many objects the AI may place in one go.",
+			"default": 150,
+			"min": 10,
+			"max": 1000
+		},
+		"no-touch": {
+			"type": "bool",
+			"name": "Make AI Objects No-Touch",
+			"description": "Placed objects won't have collision, so the AI can't accidentally break your gameplay. Strongly recommended.",
+			"default": true
+		},
+		"editor-layer": {
+			"type": "int",
+			"name": "Editor Layer",
+			"description": "Editor layer to put AI objects on, so you can hide/isolate them easily.",
+			"default": 0,
+			"min": 0,
+			"max": 999
+		},
+		"extra-ids": {
+			"type": "string",
+			"name": "Extra Palette IDs",
+			"description": "Comma-separated object IDs the AI may always use, on top of the ones already in your level and selection.",
+			"default": "1,211"
+		}
+	}
+}
