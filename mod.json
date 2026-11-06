@@ -8,35 +8,44 @@
 	},
 	"id": "kaiden.ai-decorator",
 	"name": "AI Decorator",
-	"version": "v1.0.0",
+	"version": "v1.0.1",
 	"developer": "kaiden",
 	"description": "An AI that decorates your level for you. Select your layout, describe a vibe, hit Decorate.",
-	"tags": ["editor", "utility"],
+	"tags": [
+		"editor",
+		"utility"
+	],
 	"settings": {
 		"provider": {
 			"type": "string",
 			"name": "AI Provider",
 			"description": "Which API to talk to. 'OpenAI-compatible' works with OpenAI, OpenRouter, Groq, local LM Studio/Ollama servers, etc.",
 			"default": "Anthropic",
-			"one-of": ["Anthropic", "OpenAI-compatible"]
+			"one-of": [
+				"Anthropic",
+				"OpenAI-compatible"
+			]
 		},
 		"api-key": {
 			"type": "string",
 			"name": "API Key",
 			"description": "Your API key for the provider above. Stored in plain text in your Geode save folder, so don't share that folder.",
-			"default": ""
+			"default": "",
+			"filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/?=&%+@~!#$*()[],;"
 		},
 		"model": {
 			"type": "string",
 			"name": "Model",
 			"description": "Model name. For Anthropic e.g. claude-sonnet-5-5. For OpenAI-compatible, whatever your provider calls it.",
-			"default": "claude-sonnet-5-5"
+			"default": "claude-sonnet-5-5",
+			"filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/?=&%+@~!#$*()[],;"
 		},
 		"base-url": {
 			"type": "string",
 			"name": "OpenAI-compatible Base URL",
 			"description": "Only used for the OpenAI-compatible provider. The /chat/completions part is added for you.",
-			"default": "https://api.openai.com/v1"
+			"default": "https://api.openai.com/v1",
+			"filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/?=&%+@~!#$*()[],;"
 		},
 		"max-objects": {
 			"type": "int",
@@ -64,7 +73,8 @@
 			"type": "string",
 			"name": "Extra Palette IDs",
 			"description": "Comma-separated object IDs the AI may always use, on top of the ones already in your level and selection.",
-			"default": "1,211"
+			"default": "1,211",
+			"filter": "0123456789, "
 		}
 	}
 }
